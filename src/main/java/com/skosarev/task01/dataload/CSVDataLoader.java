@@ -21,16 +21,17 @@ public class CSVDataLoader implements DataLoader {
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(";");
 
-                String surname = values[0];
+                String lastname = values[0];
                 String name = values[1];
                 int age = Integer.parseInt(values[2]);
                 int group = Integer.parseInt(values[3]);
                 int[] grades = Arrays.stream(values).skip(4).mapToInt(Integer::parseInt).toArray();
 
-                dataGroup.addPerson(new Person(name, surname, age, group, grades));
+                dataGroup.addPerson(new Person(name, lastname, age, group, grades));
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found.");
+            System.err.println("File not found.");
+            System.exit(404);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

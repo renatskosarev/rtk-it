@@ -18,9 +18,14 @@ public class AverageMarkCommand implements Command {
         int count = 0;
 
         for (int grade : grades) {
-            for (Person person : this.dataGroup.getPeopleByBucket(grade)) {
-                sum += person.averageGrade();
-                count += 1;
+            try {
+                for (Person person : this.dataGroup.getPeopleByBucket(grade)) {
+                    sum += person.averageMark();
+                    count += 1;
+                }
+            } catch (RuntimeException e) {
+                System.err.println("Invalid grade: " + grade);
+                return;
             }
         }
 

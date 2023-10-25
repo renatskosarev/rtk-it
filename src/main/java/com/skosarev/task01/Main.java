@@ -7,10 +7,10 @@ import com.skosarev.task01.service.StudentService;
 public class Main {
     public static void main(String[] args) {
         // лучше задавать путь в аргументах запуска, но для удобства (чтобы не вводить каждый раз) вынес сюда
-        CommandBuilder cb = new CommandBuilder(new StudentService(new CSVDataLoader(
+        CommandBuilder commandBuilder = new CommandBuilder(new StudentService(new CSVDataLoader(
                 ""
         )));
 
-        cb.solve(args[0], args[1]);
+        commandBuilder.solve(args[0], args[1]);
     }
 }

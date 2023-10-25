@@ -6,6 +6,6 @@ public class CyrillicFirstLetterCriteria implements GroupCriteria {
     @Override
     public int criteria(Person person) {
         // 1040 — числовое значение кириллической 'А'
-        return person.surname().charAt(0) - 1040;
+        return person.lastname().charAt(0) - 1040;
     }
 }

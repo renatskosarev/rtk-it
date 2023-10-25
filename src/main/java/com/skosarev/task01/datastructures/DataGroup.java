@@ -37,21 +37,23 @@ public class DataGroup {
     }
 
     public Person[] getAllPeople() {
-        // todo implement this method
-        throw new UnsupportedOperationException();
+        Person[] result = new Person[0];
+        for (Person[] bucket : buckets) {
+            result = concatWithArrayCopy(result, bucket);
+        }
+
+        return filterNotNull(result);
     }
 
     public Person[] getPeopleByCriteria(Person person) {
-        return Arrays.stream(buckets[groupCriteria.criteria(person)])
-                .filter(Objects::nonNull)
-                .toArray(Person[]::new);
+        return filterNotNull(buckets[groupCriteria.criteria(person)]);
     }
 
-    // todo наверное, плохо предоставлять пользователю доступ напрямую по корзинам?
     public Person[] getPeopleByBucket(int bucketNumber) {
-        return Arrays.stream(buckets[bucketNumber])
-                .filter(Objects::nonNull)
-                .toArray(Person[]::new);
+        if (bucketNumber < 0 || bucketNumber >= buckets.length) {
+            throw new RuntimeException("Bucket with number " + bucketNumber + " not exists");
+        }
+        return filterNotNull(buckets[bucketNumber]);
     }
 
     private void increaseBucketsNumber() {
@@ -64,5 +66,15 @@ public class DataGroup {
 
     private void increaseBucket(int bucketIndex) {
         buckets[bucketIndex] = Arrays.copyOf(buckets[bucketIndex], buckets[bucketIndex].length * 2);
+    }
+
+    private static <T> T[] concatWithArrayCopy(T[] array1, T[] array2) {
+        T[] result = Arrays.copyOf(array1, array1.length + array2.length);
+        System.arraycopy(array2, 0, result, array1.length, array2.length);
+        return result;
+    }
+
+    private static Person[] filterNotNull(Person[] people) {
+        return Arrays.stream(people).filter(Objects::nonNull).toArray(Person[]::new);
     }
 }
