@@ -1,4 +1,4 @@
-package com.skosarev.task01;
+package com.skosarev.task01.model;
 
 public record Person(String name, String surname, int age, int group,
                      int physics, int mathematics, int rus, int literature, int geometry, int informatics) {
