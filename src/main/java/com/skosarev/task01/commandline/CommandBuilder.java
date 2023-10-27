@@ -1,5 +1,7 @@
 package com.skosarev.task01.commandline;
 
+import com.skosarev.task01.commandline.parser.CommandParser;
+import com.skosarev.task01.commandline.parser.SimpleCommandParser;
 import com.skosarev.task01.datastructures.DataGroup;
 import com.skosarev.task01.datastructures.criteria.AgeCriteria;
 import com.skosarev.task01.datastructures.criteria.CyrillicFirstLetterCriteria;
@@ -16,18 +18,25 @@ public class CommandBuilder {
         this.studentService = studentService;
     }
 
-    public void solve(String action, String argument) {
-        switch (action) {
+    public void solve(String command) {
+        CommandParser commandParser = new SimpleCommandParser(command);
+        String[] args = commandParser.getArgs();
+
+        switch (commandParser.getCommand()) {
             case "average-mark": {
-                solveTask1(argument);
+                solveTask1(args);
                 break;
             }
             case "excellent-students-older-than": {
-                solveTask2(argument);
+                solveTask2(args);
                 break;
             }
             case "lastname-search": {
-                solveTask3(argument);
+                solveTask3(args);
+                break;
+            }
+            case "quit": {
+                System.out.println("Goodbye!");
                 break;
             }
             default: {
@@ -36,29 +45,29 @@ public class CommandBuilder {
         }
     }
 
-    private void solveTask1(String argument) {
+    private void solveTask1(String[] args) {
         DataGroup gradeDataGroup = new DataGroup(new GradeCriteria());
         studentService.loadData(gradeDataGroup);
 
         Command solver = new AverageMarkCommand(gradeDataGroup,
-                Arrays.stream(argument.split(" ")).mapToInt(Integer::parseInt).toArray()
+                Arrays.stream(args).mapToInt(Integer::parseInt).toArray()
         );
         solver.execute();
     }
 
-    private void solveTask2(String argument) {
+    private void solveTask2(String[] args) {
         DataGroup ageDataGroup = new DataGroup(new AgeCriteria());
         studentService.loadData(ageDataGroup);
 
-        Command solver = new ExcellentStudentsOlderThanCommand(ageDataGroup, Integer.parseInt(argument));
+        Command solver = new ExcellentStudentsOlderThanCommand(ageDataGroup, Integer.parseInt(args[0]));
         solver.execute();
     }
 
-    private void solveTask3(String lastname) {
+    private void solveTask3(String[] args) {
         DataGroup lastnameDataGroup = new DataGroup(new CyrillicFirstLetterCriteria());
         studentService.loadData(lastnameDataGroup);
 
-        Command solver = new LastnameSearchCommand(lastnameDataGroup, lastname);
+        Command solver = new LastnameSearchCommand(lastnameDataGroup, args[0]);
         solver.execute();
     }
 }

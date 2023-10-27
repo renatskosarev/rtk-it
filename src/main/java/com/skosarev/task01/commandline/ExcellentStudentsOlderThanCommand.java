@@ -16,7 +16,7 @@ public class ExcellentStudentsOlderThanCommand implements Command {
 
     @Override
     public void execute() {
-        System.out.println("Excellent students older age" + this.startAge + "+:");
+        System.out.println("Excellent students age " + this.startAge + "+:");
         for (Person person : getPersonsAgeGreaterThan(this.startAge)) {
             if (person.isExcellentStudent()) {
                 System.out.println(person);

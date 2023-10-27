@@ -2,20 +2,22 @@
 
 1. Поиск всех учеников с фамилией Семенов:
    ```
-   java -jar rtk.jar lastname-search Семенов
+   lastname-search Семенов
    ```
 2. Определение средней оценки в 10 классах:
    ```
-   java -jar rtk.jar average-mark 10
+   average-mark 10
    ```
 3. Определение средней оценки в начальной школе:
    ```
-   java -jar rtk.jar average-mark "1 2 3 4"
+   average-mark 1 2 3 4
    ```
 4. Поиск отличников 14+ лет:
    ```
-   java -jar rtk.jar excellent-students-older-than 14
+   excellent-students-older-than 14
    ```
+5. Выход:
+   ```quit```
 
 ### Проблемы
 
