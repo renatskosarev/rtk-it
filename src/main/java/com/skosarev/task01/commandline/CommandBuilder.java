@@ -2,15 +2,11 @@ package com.skosarev.task01.commandline;
 
 import com.skosarev.task01.commandline.parser.CommandParser;
 import com.skosarev.task01.commandline.parser.SimpleCommandParser;
-import com.skosarev.task01.datastructures.DataGroup;
-import com.skosarev.task01.datastructures.criteria.AgeCriteria;
-import com.skosarev.task01.datastructures.criteria.CyrillicFirstLetterCriteria;
-import com.skosarev.task01.datastructures.criteria.GradeCriteria;
 import com.skosarev.task01.service.StudentService;
 
-import java.util.Arrays;
+import java.sql.SQLException;
 
-// Не уверен, что правильно организовал работу с консольными командами.
+
 public class CommandBuilder {
     private final StudentService studentService;
 
@@ -18,7 +14,7 @@ public class CommandBuilder {
         this.studentService = studentService;
     }
 
-    public void solve(String command) {
+    public void solve(String command) throws SQLException {
         CommandParser commandParser = new SimpleCommandParser(command);
         String[] args = commandParser.getArgs();
 
@@ -31,7 +27,7 @@ public class CommandBuilder {
                 solveTask2(args);
                 break;
             }
-            case "lastname-search": {
+            case "average-mark-by-lastname": {
                 solveTask3(args);
                 break;
             }
@@ -45,29 +41,18 @@ public class CommandBuilder {
         }
     }
 
-    private void solveTask1(String[] args) {
-        DataGroup gradeDataGroup = new DataGroup(new GradeCriteria());
-        studentService.loadData(gradeDataGroup);
-
-        Command solver = new AverageMarkCommand(gradeDataGroup,
-                Arrays.stream(args).mapToInt(Integer::parseInt).toArray()
-        );
+    private void solveTask1(String[] args) throws SQLException {
+        Command solver = new AverageMarkCommand(studentService.getDAO(), args);
         solver.execute();
     }
 
-    private void solveTask2(String[] args) {
-        DataGroup ageDataGroup = new DataGroup(new AgeCriteria());
-        studentService.loadData(ageDataGroup);
-
-        Command solver = new ExcellentStudentsOlderThanCommand(ageDataGroup, Integer.parseInt(args[0]));
+    private void solveTask2(String[] args) throws SQLException {
+        Command solver = new ExcellentStudentsOlderThanCommand(studentService.getDAO(), Integer.parseInt(args[0]));
         solver.execute();
     }
 
-    private void solveTask3(String[] args) {
-        DataGroup lastnameDataGroup = new DataGroup(new CyrillicFirstLetterCriteria());
-        studentService.loadData(lastnameDataGroup);
-
-        Command solver = new LastnameSearchCommand(lastnameDataGroup, args[0]);
+    private void solveTask3(String[] args) throws SQLException {
+        Command solver = new AverageMarkByLastnameCommand(studentService.getDAO(), args[0]);
         solver.execute();
     }
 }
