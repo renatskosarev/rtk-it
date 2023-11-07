@@ -14,6 +14,11 @@ public class StudentDAO {
 
     static {
         try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -33,6 +38,43 @@ public class StudentDAO {
             }
             return studentDTO;
         }
+    }
+
+    public List<StudentDTO> getAllByGroupName(String groupName) throws SQLException {
+        List<StudentDTO> result = new ArrayList<>();
+
+        String query = "SELECT * FROM students LEFT JOIN groups ON students.group_id = groups.id LEFT JOIN marks on students.id = marks.student_id WHERE group_name = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, groupName);
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+
+            while (resultSet.next()) {
+                result.add(getNextFromRS(resultSet));
+            }
+        }
+
+        return result;
+    }
+
+    public int getStudentIdByNameAndGroup(String firstName, String lastName, String groupName) {
+        String query = "SELECT students.id FROM students LEFT JOIN groups g ON g.id = students.group_id WHERE first_name = ? AND last_name = ? AND group_name = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            statement.setString(3, groupName);
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+
+            int studentId = -1;
+            if (resultSet.next()) {
+                studentId = resultSet.getInt(1);
+            }
+            return studentId;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public List<StudentDTO> getAll() throws SQLException {
@@ -206,6 +248,20 @@ public class StudentDAO {
         }
     }
 
+    public void setNewMark(String name, String group, String subject, int newMark) throws SQLException {
+        String firstName = name.split(" ")[0];
+        String lastName = name.split(" ")[1];
+
+        int studentId = getStudentIdByNameAndGroup(firstName, lastName, group);
+
+        String query = "UPDATE marks SET " + subject + " = ? WHERE student_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, newMark);
+            preparedStatement.setInt(2, studentId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
     private StudentDTO getNextFromRS(ResultSet resultSet) throws SQLException {
         String firstName = resultSet.getString("first_name");
         String lastName = resultSet.getString("last_name");
@@ -220,5 +276,14 @@ public class StudentDAO {
 
         return new StudentDTO(firstName, lastName, age, group,
                 math, geometry, informatics, physics, russian, literature);
+    }
+
+    private StudentDTO getNextFromRSWithoutMarks(ResultSet resultSet) throws SQLException {
+        String firstName = resultSet.getString("first_name");
+        String lastName = resultSet.getString("last_name");
+        int age = resultSet.getInt("age");
+        String group = resultSet.getString("group_name");
+
+        return new StudentDTO(firstName, lastName, age, group);
     }
 }

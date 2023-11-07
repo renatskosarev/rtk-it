@@ -1,9 +1,6 @@
 package com.skosarev.task01.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @AllArgsConstructor
 @Getter
@@ -21,4 +18,11 @@ public class StudentDTO {
     private int physics;
     private int russian;
     private int literature;
+
+    public StudentDTO(String firstName, String lastName, int age, String group) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.group = group;
+    }
 }
